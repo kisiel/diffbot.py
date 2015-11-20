@@ -21,8 +21,8 @@ API_VERSION = 3
 class Client(object):
     """Diffbot client."""
 
-    _apis = frozenset(('article', 'frontpage', 'product', 'image', 'analyze',
-                       'discussion'))
+    _apis = frozenset(('article', 'frontpage', 'product', 'image', 'video',
+                       'analyze', 'discussion'))
 
     def __init__(self, token, version=API_VERSION):
         """Initialise the client."""
@@ -105,6 +105,10 @@ class Client(object):
         """Image API."""
         return self.api('image', url, **kwargs)
 
+    def video(self, url, **kwargs):
+        """Video API."""
+        return self.api('video', url, **kwargs)
+
     def analyze(self, url, **kwargs):
         """Classifier (analyze) API."""
         return self.api('analyze', url, **kwargs)
@@ -123,15 +127,10 @@ class Client(object):
             urls = ' '.join(urls)
         url = self.endpoint('crawl')
         process_url = self.endpoint(api)
-        params = {
-            'token': self._token,
-            'seeds': urls,
-            'name': name,
-            'apiUrl': process_url,
-        }
+        params = {'token': self._token, 'seeds': urls, 'name': name,
+                  'apiUrl': process_url, 'maxToCrawl': 10}
 
         # Add any additional named parameters as accepted by Crawlbot
-        params['maxToCrawl'] = 10
         params.update(kwargs)
 
         self._get(url, params=params)
@@ -215,6 +214,11 @@ def product(url, token, **kwargs):
 def image(url, token, **kwargs):
     """Shortcut for `Client(token, version).image(url)`."""
     return api('image', url, token, **kwargs)
+
+
+def video(url, token, **kwargs):
+    """Shortcut for `Client(token, version).video(url)`."""
+    return api('video', url, token, **kwargs)
 
 
 def analyze(url, token, **kwargs):
